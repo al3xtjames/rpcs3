@@ -9,6 +9,7 @@
 #define MAX_PATH 4096
 
 #include <stdlib.h>
+#include <openssl/evp.h>
 #include "aes.h"
 #include "sha1.h"
 #include "lz.h"

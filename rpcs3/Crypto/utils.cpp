@@ -91,9 +91,14 @@ bool is_hex(const char* hex_str, unsigned int str_length)
 // Crypto functions (AES128-CBC, AES128-ECB, SHA1-HMAC and AES-CMAC).
 void aescbc128_decrypt(unsigned char *key, unsigned char *iv, unsigned char *in, unsigned char *out, int len)
 {
-	aes_context ctx;
-	aes_setkey_dec(&ctx, key, 128);
-	aes_crypt_cbc(&ctx, AES_DECRYPT, len, iv, in, out);
+	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+	int tmp_len;
+
+	EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), nullptr, key, iv);
+	EVP_CIPHER_CTX_set_padding(ctx, 0);
+	EVP_DecryptUpdate(ctx, out, &tmp_len, in, len);
+	EVP_DecryptFinal_ex(ctx, out + tmp_len, &len);
+	EVP_CIPHER_CTX_free(ctx);
 
 	// Reset the IV.
 	memset(iv, 0, 0x10);
@@ -101,9 +106,14 @@ void aescbc128_decrypt(unsigned char *key, unsigned char *iv, unsigned char *in,
 
 void aescbc128_encrypt(unsigned char *key, unsigned char *iv, unsigned char *in, unsigned char *out, int len)
 {
-	aes_context ctx;
-	aes_setkey_enc(&ctx, key, 128);
-	aes_crypt_cbc(&ctx, AES_ENCRYPT, len, iv, in, out);
+	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+	int tmp_len;
+
+	EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), nullptr, key, iv);
+	EVP_CIPHER_CTX_set_padding(ctx, 0);
+	EVP_EncryptUpdate(ctx, out, &tmp_len, in, len);
+	EVP_EncryptFinal_ex(ctx, out + tmp_len, &len);
+	EVP_CIPHER_CTX_free(ctx);
 
 	// Reset the IV.
 	memset(iv, 0, 0x10);
@@ -111,9 +121,14 @@ void aescbc128_encrypt(unsigned char *key, unsigned char *iv, unsigned char *in,
 
 void aesecb128_encrypt(unsigned char *key, unsigned char *in, unsigned char *out)
 {
-	aes_context ctx;
-	aes_setkey_enc(&ctx, key, 128);
-	aes_crypt_ecb(&ctx, AES_ENCRYPT, in, out);
+	EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+	int tmp_len;
+
+	EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), nullptr, key, nullptr);
+	EVP_CIPHER_CTX_set_padding(ctx, 0);
+	EVP_EncryptUpdate(ctx, out, &tmp_len, in, 16);
+	EVP_EncryptFinal_ex(ctx, out + tmp_len, &tmp_len);
+	EVP_CIPHER_CTX_free(ctx);
 }
 
 bool hmac_hash_compare(unsigned char *key, int key_len, unsigned char *in, int in_len, unsigned char *hash, int hash_len)

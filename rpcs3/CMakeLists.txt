@@ -427,6 +427,11 @@ find_package(ZLIB REQUIRED)
 target_include_directories(rpcs3 PUBLIC ${ZLIB_INCLUDE_DIRS})
 target_link_libraries(rpcs3 ${ZLIB_LIBRARIES})
 
+# HACK - add as submodule & fix for Windows
+find_package(OpenSSL REQUIRED)
+include_directories(rpcs3 PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_link_libraries(rpcs3 OpenSSL::Crypto)
+
 if(WIN32)
 	target_link_libraries(rpcs3 ws2_32.lib Winmm.lib Psapi.lib gdi32.lib Shlwapi.lib)
 	if(MSVC)
