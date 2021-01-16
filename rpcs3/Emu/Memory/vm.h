@@ -202,6 +202,21 @@ namespace vm
 		}
 	};
 
+#ifdef __APPLE__
+	template<>
+	struct cast_impl<ulong>
+	{
+		static vm::addr_t cast(ulong addr,
+			u32 line,
+			u32 col,
+			const char* file,
+			const char* func)
+		{
+			return static_cast<vm::addr_t>(::narrow<u32>(addr, line, col, file, func));
+		}
+	};
+#endif
+
 	template<typename T, bool Se>
 	struct cast_impl<se_t<T, Se>>
 	{

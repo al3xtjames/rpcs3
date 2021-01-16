@@ -2440,6 +2440,14 @@ public:
 		return llvm_value_t<T>::get_type(m_context);
 	}
 
+#ifdef __APPLE__
+	template <>
+	llvm::Type* GetType<ulong>()
+	{
+		return llvm_value_t<u64>::get_type(m_context);
+	}
+#endif
+
 	template <typename T>
 	llvm::Type* get_type()
 	{
