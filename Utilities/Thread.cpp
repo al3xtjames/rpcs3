@@ -2874,6 +2874,9 @@ std::pair<void*, usz> thread_ctrl::get_thread_stack()
 	GetCurrentThreadStackLimits(&_min, &_max);
 	const usz ssize = _max - _min;
 	const auto saddr = reinterpret_cast<void*>(_min);
+#elif defined(__APPLE__)
+	const auto saddr = pthread_get_stackaddr_np(pthread_self());
+	const auto ssize = pthread_get_stacksize_np(pthread_self());
 #else
 	void* saddr = 0;
 	usz ssize = 0;
