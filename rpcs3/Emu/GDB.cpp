@@ -30,6 +30,7 @@
 #endif
 
 #include <algorithm>
+#include <cinttypes>
 #include <regex>
 #include <charconv>
 
@@ -50,8 +51,6 @@ void set_nonblocking(int s)
 }
 
 #define sscanf_s sscanf
-#define HEX_U32 "x"
-#define HEX_U64 "lx"
 #else
 
 void set_nonblocking(int s)
@@ -60,8 +59,6 @@ void set_nonblocking(int s)
 	ioctlsocket(s, FIONBIO, &mode);
 }
 
-#define HEX_U32 "lx"
-#define HEX_U64 "llx"
 #endif
 
 struct gdb_cmd
@@ -83,32 +80,32 @@ bool check_errno_again()
 }
 
 std::string u32_to_hex(u32 i) {
-	return fmt::format("%" HEX_U32, i);
+	return fmt::format("%" PRIx32, i);
 }
 
 std::string u64_to_padded_hex(u64 value) {
-	return fmt::format("%.16" HEX_U64, value);
+	return fmt::format("%.16" PRIx64, value);
 }
 
 std::string u32_to_padded_hex(u32 value) {
-	return fmt::format("%.8" HEX_U32, value);
+	return fmt::format("%.8" PRIx32, value);
 }
 
 u8 hex_to_u8(std::string val) {
 	u8 result;
-	sscanf_s(val.c_str(), "%02hhX", &result);
+	sscanf_s(val.c_str(), "%" PRIx8, &result);
 	return result;
 }
 
 u32 hex_to_u32(std::string val) {
 	u32 result;
-	sscanf_s(val.c_str(), "%" HEX_U32, &result);
+	sscanf_s(val.c_str(), "%" PRIx32, &result);
 	return result;
 }
 
 u64 hex_to_u64(std::string val) {
 	u64 result;
-	sscanf_s(val.c_str(), "%" HEX_U64, &result);
+	sscanf_s(val.c_str(), "%" PRIx64, &result);
 	return result;
 }
 
