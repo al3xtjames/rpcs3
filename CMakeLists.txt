@@ -55,11 +55,6 @@ if(WIN32)
 	add_definitions(-D_WIN32_WINNT=0x0602)
 endif()
 
-if(APPLE)
-	include_directories(/opt/local/include)
-	link_directories(/opt/local/lib)
-endif()
-
 # Warnings are silenced for 3rdparty code
 set(CMAKE_CXX_FLAGS -w)
 set(CMAKE_C_FLAGS -w)
