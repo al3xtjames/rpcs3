@@ -757,7 +757,13 @@ jit_compiler::jit_compiler(const std::unordered_map<std::string, u64>& _link, co
 
 		for (auto&& [name, addr] : _link)
 		{
+#ifdef __APPLE__
+			// On macOS, symbols are mangled by prefixing the symbol name with '_'.
+			// LLVM assumes the name passed to addGlobalMapping is mangled, so add the prefix here.
+			m_engine->updateGlobalMapping('_' + name, addr);
+#else
 			m_engine->updateGlobalMapping(name, addr);
+#endif
 		}
 	}
 
